@@ -8,15 +8,6 @@
 MPU6050 mpu;
 //MPU6050 mpu(0x69); // <-- use for AD0 high
 
-// See the yaw/pitch/roll angles (in degrees) calculated from the quaternions coming
-// from the FIFO. Note this also requires gravity vector calculations.
-// Also note that yaw/pitch/roll angles suffer from gimbal lock
-#define OUTPUT_READABLE_YAWPITCHROLL
-
-// See acceleration components with gravity removed and adjusted for the world frame of
-// reference (yaw is relative to initial orientation, since no magnetometer is present in this case).
-#define OUTPUT_READABLE_WORLDACCEL
-
 #define LED_PIN 13 // (Arduino is 13)
 bool blinkState = false;
 
@@ -87,12 +78,10 @@ void setup() {
         mpu.setDMPEnabled(true); // turn on the DMP, now that it's ready
         attachInterrupt(0, dmpDataReady, RISING);
         mpuIntStatus = mpu.getIntStatus(); // enable Arduino interrupt detection
-
         dmpReady = true; // set our DMP Ready flag so the main loop() function knows it's okay to use it
-
         packetSize = mpu.dmpGetFIFOPacketSize(); // get expected DMP packet size for later comparison
-    } else {
-        // ERROR!
+        
+    } else {  // ERROR!
         // 1 = initial memory load failed
         // 2 = DMP configuration updates failed
         Serial.print(F("DMP Initialization failed (code "));
@@ -111,14 +100,6 @@ void loop() {
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
 
-    // wait for MPU interrupt or extra packet(s) available
-    while (!mpuInterrupt && fifoCount < packetSize) {
-        // other program behavior stuff here
-        // if you are really paranoid you can frequently test in between other
-        // stuff to see if mpuInterrupt is true, and if so, "break;" from the
-        // while() loop to immediately process the MPU data
-    }
-
     // reset interrupt flag and get INT_STATUS byte
     mpuInterrupt = false;
     mpuIntStatus = mpu.getIntStatus();
@@ -128,15 +109,14 @@ void loop() {
 
     // check for overflow (this should never happen unless our code is too inefficient)
     if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
-        // reset so we can continue cleanly
-        mpu.resetFIFO();
+        mpu.resetFIFO(); // reset so we can continue cleanly
         Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } else if (mpuIntStatus & 0x02) {
         float acc[3]; //acceleration vector [x, y, z]
         float rot[3]; //rotation vector [yaw, pitch, roll]
-        getacc(acc);
+        Magnitude = getacc(acc);
         getrot(rot);
 
         Serial.print("ypr\t");
@@ -159,7 +139,7 @@ void loop() {
     }
 }
 
-void getacc(float accel[])
+float getacc(float accel[])
 {
   // wait for correct available data length, should be a VERY short wait
   // read a packet from FIFO
@@ -169,6 +149,7 @@ void getacc(float accel[])
   fifoCount -= packetSize;
   
   // get initial world-frame acceleration, adjusted to remove gravity and rotated based on known orientation from quaternion
+  // Adjusted for the world frame of reference (yaw is relative to initial orientation).
   mpu.dmpGetQuaternion(&q, fifoBuffer);
   mpu.dmpGetAccel(&aa, fifoBuffer);
   mpu.dmpGetGravity(&gravity, &q);
@@ -178,18 +159,20 @@ void getacc(float accel[])
   accel[0] = aaWorld.x;
   accel[1] = aaWorld.y;
   accel[2] = aaWorld.z;
+
+  accMag = pow(pow(accel[0],2) + pow(accel[1],2) + pow(accel[2],2), 0.5);
+  return accMag;
 }
 
 void getrot(float rotation[])
 {
-  // wait for correct available data length, should be a VERY short wait
-  // read a packet from FIFO
-  // track FIFO count here in case there is > 1 packet available
+  // see getacc
   while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
   mpu.getFIFOBytes(fifoBuffer, packetSize);
   fifoCount -= packetSize;
   
   // get Euler angles in degrees
+  // Note that yaw/pitch/roll angles suffer from gimbal lock
   mpu.dmpGetQuaternion(&q, fifoBuffer);
   mpu.dmpGetGravity(&gravity, &q);
   mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
