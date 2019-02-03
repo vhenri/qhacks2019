@@ -116,15 +116,25 @@ void setup() {
     pixels.begin();
     clearPixels();
     startUpPattern();
-}
+
 
  // ---- IDK RANDOM OLED STUFF ----//
-  oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+//  oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+//  oled.clearDisplay();
+//  //    delay(200);
+//      oled.setTextSize(2);
+//      oled.setTextColor(WHITE);
+//      oled.setCursor(22,12);
+//      oled.print("CHONK!");
+//      oled.setTextColor(BLACK, WHITE); // 'inverted' text
+//      oled.display();
+//  
+  
   // init done         
   //oled.display(); // show splashscreen
   //Time.zone(-4);
 // ----------------------------//
-
+}
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
@@ -134,17 +144,17 @@ void loop() {
     delay(10);
 
     // ------- OLED STUFF IDK? ------ //
-    oled.clearDisplay();
-    delay(200);
-    oled.setTextSize(2);
-    oled.setTextColor(WHITE);
-    oled.setCursor(0,0);
-    oled.print(oled.print("Hello World"));
-    oled.setTextColor(BLACK, WHITE); // 'inverted' text
-    
-    oled.display();
-    
-    delay(800);
+//    oled.clearDisplay();
+////    delay(200);
+//    oled.setTextSize(2);
+//    oled.setTextColor(WHITE);
+//    oled.setCursor(0,0);
+//    oled.print("Hello World");
+//    oled.setTextColor(BLACK, WHITE); // 'inverted' text
+//    
+//    oled.display();
+//    
+//    delay(800);
     // ---------------------------- //
   
     // if programming failed, don't try to do anything
@@ -188,8 +198,28 @@ void loop() {
        
         
         // set LED ring - Roll pitch from gyro for direction, accelerometer magnitude for magnitude of sweep
-        accelDirection(getLED_Direction(rot),accel_avg);
-        Serial.println(getFreeMemory());
+        LED_Direction = getLED_Direction(rot);
+        accelDirection(LED_Direction,accel_avg);
+
+        if (LED_Direction < 7 && LED_Direction > 2) {
+          if (accel_avg > 75){
+            Serial.println("LB"); // left boost
+          }
+          else {
+            Serial.println("L"); // left no boost
+          }
+        }
+        else if (LED_Direction < 14 && LED_Direction > 9){ // LED_Dir > 8
+          if (accel_avg > 75){
+            Serial.println("RB"); // Right Boost 
+          }
+          else { 
+            Serial.println("R"); // Right no boost
+          }
+        }
+        else {
+          Serial.println("C");
+        }
     }
 }
 
@@ -227,7 +257,7 @@ int getLED_Direction(float rot[]){
   int default_roll = 0;
 
   double LED_angle = atan2((pitch),(roll)) * 180/M_PI;
-  
+
   
 //  Serial.print("LED_angle: ");
 //  Serial.println(LED_angle);
@@ -340,7 +370,6 @@ void accelDirection(uint8_t LED_dir, uint8_t LED_mag) {
     redVal = 255 - LED_mag / maxMag * 255;
     greenVal = 0;
     blueVal = LED_mag/maxMag * 255;
-    Serial.println(redVal);
     for (uint8_t i=0; i<NUM_LEDS; i++) {
       pixels.setPixelColor(i,redVal,greenVal,blueVal);
     }
@@ -394,13 +423,4 @@ void startUpPattern() {
         delay(50);
       }
     }
-}
-
-// Find out how much free memory we have
-unsigned int getFreeMemory()
-{
- uint8_t* temp = (uint8_t*)malloc(16);    // assumes there are no free holes so this is allocated at the end
- unsigned int rslt = (uint8_t*)SP - temp;
- free(temp);
- return rslt;
 }

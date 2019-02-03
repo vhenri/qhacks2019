@@ -4,7 +4,7 @@
 /* ============== MAIN =====================*/
 
  //Use I2C with OLED RESET pin on D4
- #define OLED_RESET D4
+ #define OLED_RESET A4
  Adafruit_SSD1306 oled(OLED_RESET);
 
 
@@ -18,9 +18,7 @@
      
   //oled.display(); // show splashscreen
 
-  Time.zone(-4);
-  
-   
+//  Time.zone(-4); 
 }
 
 void loop() {
@@ -29,7 +27,7 @@ void loop() {
   oled.setTextSize(2);
   oled.setTextColor(WHITE);
   oled.setCursor(0,0);
-  oled.print(Time.hourFormat12()); oled.print(":"); oled.print(Time.minute()); oled.print(":"); oled.print(Time.second());
+  oled.print("Hello");
   oled.setTextColor(BLACK, WHITE); // 'inverted' text
   
   oled.display();
