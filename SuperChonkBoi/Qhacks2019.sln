@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qhacks2019", "Assembly-CSharp-firstpass.csproj", "{BA441143-CB55-F83A-9C3A-AE9C629C5742}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qhacks2019", "Assembly-CSharp.csproj", "{05ADA296-CA04-F432-2ACC-3DCD48455AF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qhacks2019", "Assembly-CSharp-Editor-firstpass.csproj", "{70BABC34-9DA7-D58F-4BA2-E003956B645C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA441143-CB55-F83A-9C3A-AE9C629C5742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA441143-CB55-F83A-9C3A-AE9C629C5742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA441143-CB55-F83A-9C3A-AE9C629C5742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA441143-CB55-F83A-9C3A-AE9C629C5742}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05ADA296-CA04-F432-2ACC-3DCD48455AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05ADA296-CA04-F432-2ACC-3DCD48455AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05ADA296-CA04-F432-2ACC-3DCD48455AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05ADA296-CA04-F432-2ACC-3DCD48455AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70BABC34-9DA7-D58F-4BA2-E003956B645C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70BABC34-9DA7-D58F-4BA2-E003956B645C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70BABC34-9DA7-D58F-4BA2-E003956B645C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70BABC34-9DA7-D58F-4BA2-E003956B645C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
